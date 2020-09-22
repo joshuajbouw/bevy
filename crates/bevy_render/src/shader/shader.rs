@@ -11,27 +11,7 @@ pub enum ShaderStage {
     Compute,
 }
 
-#[cfg(all(not(target_os = "ios"), not(target_arch = "wasm32")))]
-impl Into<bevy_glsl_to_spirv::ShaderType> for ShaderStage {
-    fn into(self) -> bevy_glsl_to_spirv::ShaderType {
-        match self {
-            ShaderStage::Vertex => bevy_glsl_to_spirv::ShaderType::Vertex,
-            ShaderStage::Fragment => bevy_glsl_to_spirv::ShaderType::Fragment,
-            ShaderStage::Compute => bevy_glsl_to_spirv::ShaderType::Compute,
-        }
-    }
-}
-
-#[cfg(all(not(target_os = "ios"), not(target_arch = "wasm32")))]
-fn glsl_to_spirv(
-    glsl_source: &str,
-    stage: ShaderStage,
-    shader_defs: Option<&[String]>,
-) -> Vec<u32> {
-    bevy_glsl_to_spirv::compile(glsl_source, stage.into(), shader_defs).unwrap()
-}
-
-#[cfg(target_os = "ios")]
+#[cfg(not(target_arch = "wasm32"))]
 impl Into<shaderc::ShaderKind> for ShaderStage {
     fn into(self) -> shaderc::ShaderKind {
         match self {
@@ -42,7 +22,7 @@ impl Into<shaderc::ShaderKind> for ShaderStage {
     }
 }
 
-#[cfg(target_os = "ios")]
+#[cfg(not(target_arch = "wasm32"))]
 fn glsl_to_spirv(
     glsl_source: &str,
     stage: ShaderStage,
